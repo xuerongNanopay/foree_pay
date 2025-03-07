@@ -1,9 +1,16 @@
+#![allow(unused)]
+
+mod class;
+
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{self, parse_macro_input, DeriveInput};
+use syn::{self, parse::ParseStream, parse_macro_input, DeriveInput, Token};
+
+
 
 #[proc_macro_derive(GettersSetters)]
 pub fn getters_setters_derive(input: TokenStream) -> TokenStream {
+    println!("******** Received tokens: {}", input);
     let input = parse_macro_input!(input as DeriveInput);
     let struct_name = &input.ident;
 
@@ -46,6 +53,50 @@ pub fn getters_setters_derive(input: TokenStream) -> TokenStream {
     };
 
     TokenStream::from(expanded)
+}
+
+use syn::{Ident, Type};
+use syn::punctuated::Punctuated;
+use syn::parse::{Parse};
+
+struct StructInput {
+    name: Ident, // Struct name
+    fields: Punctuated<(Ident, Type), Token![,]>, // Struct fields
+}
+
+impl Parse for StructInput {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let name: Ident = input.parse()?; // Parse struct name
+        input.parse::<Token![,]>()?; // Consume the comma
+
+        // Parse the list of fields (field_name: Type)
+        let fields = Punctuated::parse_terminated_with(input, |input| {
+            let field_name: Ident = input.parse()?; // Parse field name
+            input.parse::<Token![:]>()?; // Consume `:`
+            let field_type: Type = input.parse()?; // Parse field type
+            Ok((field_name, field_type))
+        })?;
+
+        Ok(StructInput { name, fields })
+    }
+}
+
+#[proc_macro]
+pub fn foam_class(input: TokenStream) -> TokenStream {
+    println!("******** Received tokens: {}", input);
+    let StructInput { name, fields } = parse_macro_input!(input as StructInput);
+
+    let field_definitions = fields.iter().map(|(name, ty)| {
+        quote! { pub #name: #ty }
+    });
+
+    let expanded = quote! {
+        struct #name {
+            #(#field_definitions),*
+        }
+    };
+
+    expanded.into()
 }
 
 #[cfg(test)]

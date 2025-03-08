@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-mod class;
+mod entity;
 
 use proc_macro::TokenStream;
 use quote::quote;
@@ -97,6 +97,19 @@ pub fn foam_class(input: TokenStream) -> TokenStream {
     };
 
     expanded.into()
+}
+
+#[proc_macro]
+pub fn foam_entity_proc(input: TokenStream) -> TokenStream {
+    match syn::parse(input) {
+        Ok(input) => entity::expand(input).into(),
+        Err(_) => quote::quote! {
+            compile_error!(
+                "Parse Error"
+            );
+        }
+        .into(),
+    }
 }
 
 #[cfg(test)]

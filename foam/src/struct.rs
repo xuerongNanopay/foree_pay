@@ -15,7 +15,7 @@ pub(crate) struct StructParser {
 
 impl syn::parse::Parse for StructParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let struct_name = input.parse()?;
+        let struct_name = input.parse::<StructName>()?;
         let remaining_tokens: TokenStream = input.parse()?;
         Ok(Self{
             struct_name

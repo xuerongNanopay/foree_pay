@@ -1,7 +1,7 @@
 use foam::foam_struct_proc;
 
 foam_struct_proc!{
-    name: "aaa"
+    name: "Aaaa"
 }
 
 fn main() {

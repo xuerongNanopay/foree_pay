@@ -2,5 +2,5 @@
 resolver = "2"
 members = [ 
     "foam",
-    "foree_backend",
+    "foree_backend", "foree_frontend",
 ]

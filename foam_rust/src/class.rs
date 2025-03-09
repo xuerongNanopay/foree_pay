@@ -12,7 +12,7 @@ pub(crate) struct EntityDecl {
 impl syn::parse::Parse for EntityDecl {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         let remaining_tokens: TokenStream = input.parse()?;
-        println!("vvvvvv {}", remaining_tokens);
+        println!("remaining tokens `{}`", remaining_tokens);
 
         let name = "111".to_owned();
         
@@ -23,8 +23,6 @@ impl syn::parse::Parse for EntityDecl {
 }
 
 pub(crate) fn expand(input: EntityDecl) -> TokenStream {
-    println!("vvvvvv11");
-
     quote::quote! {
         struct CCCC {
             a: u32,

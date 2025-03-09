@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-mod entity;
+mod class;
 
 use proc_macro::TokenStream;
 use quote::quote;
@@ -100,15 +100,15 @@ pub fn foam_class(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
-pub fn foam_entity_proc(input: TokenStream) -> TokenStream {
+pub fn foam_class_proc(input: TokenStream) -> TokenStream {
+    println!("******** Received tokens: {}", input);
     match syn::parse(input) {
-        Ok(input) => entity::expand(input).into(),
-        Err(_) => quote::quote! {
-            compile_error!(
-                "Parse Error"
-            );
+        Ok(input) => class::expand(input).into(),
+        Err(e) => {
+            quote::quote! {
+                compile_error!("Parse Error");
+            }.into()
         }
-        .into(),
     }
 }
 

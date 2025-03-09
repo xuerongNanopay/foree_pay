@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use foam_rust::{foam_class, GettersSetters};
+use foam_rust::{foam_class, foam_class_proc, GettersSetters};
 
 // #[derive(GettersSetters)]
 // struct Person {
@@ -8,10 +8,21 @@ use foam_rust::{foam_class, GettersSetters};
 //     age: u32,
 // }
 
-foam_class! {
-    Person, 
-    name: String, 
-    age: u32
+// foam_class! {
+//     Person, 
+//     name: String, 
+//     age: u32
+// }
+
+// foam_class! {
+//     Person1, 
+//     name: String, 
+//     age: u32
+// }
+
+
+foam_class_proc! {
+    AAAA: u32
 }
 
 fn main() {

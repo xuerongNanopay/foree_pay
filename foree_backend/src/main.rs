@@ -1,6 +1,6 @@
-use foam::foam_class_proc;
+use foam::foam_struct_proc;
 
-foam_class_proc!{
+foam_struct_proc!{
     name: "aaa"
 }
 

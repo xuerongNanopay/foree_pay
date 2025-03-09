@@ -4,12 +4,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse::ParseStream;
 
-pub(crate) struct EntityDecl {
+pub(crate) struct ClassParser {
     pub(crate) name: String,
     // pub(crate) table_name: String,
 }
 
-impl syn::parse::Parse for EntityDecl {
+impl syn::parse::Parse for ClassParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         let remaining_tokens: TokenStream = input.parse()?;
         println!("remaining tokens `{}`", remaining_tokens);
@@ -22,7 +22,7 @@ impl syn::parse::Parse for EntityDecl {
     }
 }
 
-pub(crate) fn expand(input: EntityDecl) -> TokenStream {
+pub(crate) fn expand(parser: ClassParser) -> TokenStream {
     quote::quote! {
         struct CCCC {
             a: u32,

@@ -22,7 +22,7 @@ use foam_rust::{foam_class, foam_class_proc, GettersSetters};
 
 
 foam_class_proc! {
-    AAAA: u32
+    name: "dasfads",
 }
 
 fn main() {

@@ -1,4 +1,4 @@
-use foam::foam_struct_proc;
+use nano_foam::foam_struct_proc;
 
 foam_struct_proc!{
     struct_name: "Aaaa"

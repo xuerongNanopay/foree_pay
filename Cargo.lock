@@ -3,24 +3,24 @@
 version = 4
 
 [[package]]
-name = "foam"
+name = "foree_backend"
+version = "0.1.0"
+dependencies = [
+ "nano_foam",
+]
+
+[[package]]
+name = "foree_frontend"
+version = "0.1.0"
+
+[[package]]
+name = "nano_foam"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "foree_backend"
-version = "0.1.0"
-dependencies = [
- "foam",
-]
-
-[[package]]
-name = "foree_frontend"
-version = "0.1.0"
 
 [[package]]
 name = "proc-macro2"

@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [ 
-    "foam",
-    "foree_backend", "foree_frontend",
+    "nano_foam",
+    "foree_backend", 
+    "foree_frontend",
 ]

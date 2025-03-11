@@ -1,25 +1,31 @@
 #![allow(unused)]
 
+use class_token::features;
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, Ident, LitStr, Token};
 
 mod class_token {
     syn::custom_keyword!(struct_name);
-    syn::custom_keyword!(imports);
+    syn::custom_keyword!(use_imports);
+    syn::custom_keyword!(features);
 }
 
 pub(crate) struct StructParser {
     struct_name: StructName,
+    features: Features,
     // pub(crate) table_name: String,
 }
 
 impl syn::parse::Parse for StructParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         let struct_name = input.parse::<StructName>()?;
-        let remaining_tokens: TokenStream = input.parse()?;
+        let comma = input.parse::<syn::Token![,]>()?;
+        let features = input.parse()?;
+        let comma = input.parse::<syn::Token![,]>()?;
         Ok(Self{
-            struct_name
+            struct_name,
+            features
         })
     }
 }
@@ -32,10 +38,6 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
             a: u32,
         }
     }
-}
-
-pub(crate) struct Features {
-    
 }
 
 pub(crate) struct StructName {
@@ -66,7 +68,7 @@ impl ToTokens for StructName {
 }
 
 pub(crate) struct UseStatements {
-    _key: class_token::imports,
+    _key: class_token::use_imports,
     _colon: syn::Token![:],
     use_statements: Punctuated<LitStr, Token![,]>
 }
@@ -83,6 +85,30 @@ impl syn::parse::Parse for UseStatements {
 
         Ok(Self{
             use_statements,
+            _colon,
+            _key,
+        })
+    }
+}
+
+pub(crate) struct Features {
+    _key: class_token::features,
+    _colon: syn::Token![:],
+    features: Punctuated<Ident, Token![,]>
+}
+
+impl syn::parse::Parse for Features {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        let _key = input.parse()?;
+        let _colon = input.parse()?;
+
+        let content;
+        bracketed!(content in input);
+
+        let features = Punctuated::parse_terminated(&content)?;
+        println!("features: {}", features.last().unwrap());
+        Ok(Self{
+            features,
             _colon,
             _key,
         })

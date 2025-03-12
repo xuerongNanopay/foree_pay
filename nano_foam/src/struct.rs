@@ -1,11 +1,12 @@
 #![allow(unused)]
 
-use class_token::features;
+use std::fmt::format;
+
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, Ident, LitStr, Token};
+use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
-mod class_token {
+pub mod class_token {
     syn::custom_keyword!(struct_name);
     syn::custom_keyword!(use_imports);
     syn::custom_keyword!(features);
@@ -19,13 +20,37 @@ pub(crate) struct StructParser {
 
 impl syn::parse::Parse for StructParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let struct_name = input.parse::<StructName>()?;
-        let comma = input.parse::<syn::Token![,]>()?;
-        let features = input.parse()?;
-        let comma = input.parse::<syn::Token![,]>()?;
+        let mut struct_name: Option<StructName> = None;
+        let mut features: Option<Features> = None;
+
+        'parsing: loop {
+            match () {
+                _ if input.peek(class_token::struct_name) => {
+                    struct_name = Some(input.parse::<StructName>()?);
+                },
+                _ if input.peek(class_token::features) => {
+                    features = Some(input.parse::<Features>()?);
+                },
+                _ => {
+                    let remain_name: TokenStream = input.parse()?;
+                    return Err(syn::Error::new(remain_name.span(), remain_name));
+                }
+            };
+
+            if input.peek(syn::Token![,]) {
+                input.parse::<syn::Token![,]>()?;
+                
+                if !input.is_empty() {
+                    continue 'parsing;
+                }
+            }
+
+            break 'parsing;
+        }
+
         Ok(Self{
-            struct_name,
-            features
+            struct_name: struct_name.unwrap(),
+            features: features.unwrap(),
         })
     }
 }

@@ -21,7 +21,7 @@ impl syn::parse::Parse for StructParser {
 
         'parsing: loop {
             match () {
-                _ if input.peek(token::struct_name) => {
+                _ if input.peek(token::name) => {
                     struct_name = Some(input.parse::<StructName>()?);
                 },
                 _ if input.peek(token::features) => {
@@ -67,7 +67,7 @@ pub(crate) struct StructName {
 
 impl syn::parse::Parse for StructName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::struct_name>()?;
+        input.parse::<token::name>()?;
         input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
 

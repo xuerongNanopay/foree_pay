@@ -63,20 +63,16 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
 
 pub(crate) struct StructName {
     name: LitStr,
-    _colon: syn::Token![:],
-    _key: token::struct_name,
 }
 
 impl syn::parse::Parse for StructName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let _key = input.parse()?;
-        let _colon = input.parse()?;
+        input.parse::<token::struct_name>()?;
+        input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
 
         Ok(Self{
             name,
-            _colon,
-            _key,
         })
     }
 }
@@ -89,15 +85,13 @@ impl ToTokens for StructName {
 }
 
 pub struct UseStatements {
-    _key: token::use_imports,
-    _colon: syn::Token![:],
     use_statements: Punctuated<LitStr, Token![,]>
 }
 
 impl syn::parse::Parse for UseStatements {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let _key = input.parse()?;
-        let _colon = input.parse()?;
+        input.parse::<token::use_imports>()?;
+        input.parse::<syn::Token![:]>()?;
 
         let content;
         bracketed!(content in input);
@@ -106,22 +100,18 @@ impl syn::parse::Parse for UseStatements {
         
         Ok(Self{
             use_statements,
-            _colon,
-            _key,
         })
     }
 }
 
 pub struct Features {
-    _key: token::features,
-    _colon: syn::Token![:],
     features: Punctuated<Ident, Token![,]>
 }
 
 impl syn::parse::Parse for Features {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let _key = input.parse()?;
-        let _colon = input.parse()?;
+        input.parse::<token::features>()?;
+        input.parse::<syn::Token![:]>()?;
 
         let content;
         bracketed!(content in input);
@@ -130,8 +120,6 @@ impl syn::parse::Parse for Features {
         println!("features: {}", features.last().unwrap());
         Ok(Self{
             features,
-            _colon,
-            _key,
         })
     }
 }

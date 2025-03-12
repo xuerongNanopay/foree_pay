@@ -1,7 +1,9 @@
 use proc_macro::TokenStream;
 
 mod r#struct;
-mod features;
+mod feature;
+mod property;
+mod token;
 
 #[proc_macro]
 pub fn foam_struct_proc(input: TokenStream) -> TokenStream {

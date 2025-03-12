@@ -6,13 +6,7 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
-use crate::features::Feature;
-
-pub mod class_token {
-    syn::custom_keyword!(struct_name);
-    syn::custom_keyword!(use_imports);
-    syn::custom_keyword!(features);
-}
+use crate::{feature::Feature, token};
 
 pub(crate) struct StructParser {
     struct_name: StructName,
@@ -48,10 +42,10 @@ impl syn::parse::Parse for StructParser {
 
         'parsing: loop {
             match () {
-                _ if input.peek(class_token::struct_name) => {
+                _ if input.peek(token::struct_name) => {
                     struct_name = Some(input.parse::<StructName>()?);
                 },
-                _ if input.peek(class_token::features) => {
+                _ if input.peek(token::features) => {
                     features = Some(input.parse::<Features>()?);
                 },
                 _ => {
@@ -91,7 +85,7 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
 pub(crate) struct StructName {
     name: LitStr,
     _colon: syn::Token![:],
-    _key: class_token::struct_name,
+    _key: token::struct_name,
 }
 
 impl syn::parse::Parse for StructName {
@@ -115,8 +109,8 @@ impl ToTokens for StructName {
     }
 }
 
-pub(crate) struct UseStatements {
-    _key: class_token::use_imports,
+pub struct UseStatements {
+    _key: token::use_imports,
     _colon: syn::Token![:],
     use_statements: Punctuated<LitStr, Token![,]>
 }
@@ -139,8 +133,8 @@ impl syn::parse::Parse for UseStatements {
     }
 }
 
-pub(crate) struct Features {
-    _key: class_token::features,
+pub struct Features {
+    _key: token::features,
     _colon: syn::Token![:],
     features: Punctuated<Ident, Token![,]>
 }

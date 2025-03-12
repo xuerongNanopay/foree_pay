@@ -6,7 +6,7 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
-use crate::{feature::Feature, token};
+use crate::token;
 
 pub(crate) struct StructParser {
     struct_name: StructName,
@@ -14,29 +14,8 @@ pub(crate) struct StructParser {
     // pub(crate) table_name: String,
 }
 
-pub struct ParseCtx {
-    features: HashSet<Feature>,
-}
-
-impl ParseCtx {
-    fn new() -> Self {
-        Self {
-            features: HashSet::new(),
-        }
-    }
-
-    fn insert_feature(&mut self, new_feature: Feature) {
-        self.features.insert(new_feature);
-    }
-
-    fn select_feature(&mut self, new_feature: Feature) -> bool {
-        self.features.contains(&new_feature)
-    }
-}
-
 impl syn::parse::Parse for StructParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let mut parse_ctx = ParseCtx::new();
         let mut struct_name: Option<StructName> = None;
         let mut features: Option<Features> = None;
 

@@ -4,6 +4,8 @@ mod r#struct;
 mod feature;
 mod property;
 mod token;
+mod types;
+mod parse;
 
 #[proc_macro]
 pub fn foam_struct_proc(input: TokenStream) -> TokenStream {

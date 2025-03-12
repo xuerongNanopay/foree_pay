@@ -124,7 +124,7 @@ impl syn::parse::Parse for UseStatements {
         bracketed!(content in input);
 
         let use_statements = Punctuated::parse_terminated(&content)?;
-
+        
         Ok(Self{
             use_statements,
             _colon,

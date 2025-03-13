@@ -1,6 +1,8 @@
 #![allow(unused)]
 
-use syn::{parse::ParseStream, punctuated::Punctuated, LitStr, Token};
+use proc_macro2::TokenStream;
+use quote::ToTokens;
+use syn::{parse::ParseStream, punctuated::Punctuated, Ident, LitStr, Token};
 
 use crate::token;
 
@@ -30,6 +32,13 @@ impl syn::parse::Parse for PropertyName {
         Ok(Self{
             name,
         })
+    }
+}
+
+impl ToTokens for PropertyName {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let struct_name = Ident::new(&self.name.value(), self.name.span());
+        struct_name.to_tokens(tokens);
     }
 }
 

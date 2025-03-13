@@ -18,7 +18,6 @@ pub(super) struct Properties {
 pub(super) struct Property {
     name: Option<PropertyName>,
     class: Option<PropertyClass>,
-    of: Option<PropertyOf>
 }
 
 pub(crate) struct PropertyName {
@@ -46,6 +45,7 @@ impl ToTokens for PropertyName {
 
 pub(crate) struct PropertyClass {
     class: LitStr,
+
 }
 
 impl syn::parse::Parse for PropertyClass {
@@ -53,25 +53,9 @@ impl syn::parse::Parse for PropertyClass {
         input.parse::<token::class>()?;
         input.parse::<syn::Token![:]>()?;
         let class: LitStr = input.parse()?;
-
+        
         Ok(Self{
             class,
-        })
-    }
-}
-
-pub(crate) struct PropertyOf {
-    of: LitStr,
-}
-
-impl syn::parse::Parse for PropertyOf {
-    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::class>()?;
-        input.parse::<syn::Token![:]>()?;
-        let of: LitStr = input.parse()?;
-
-        Ok(Self{
-            of,
         })
     }
 }

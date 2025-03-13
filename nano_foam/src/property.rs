@@ -12,9 +12,9 @@ pub(super) struct Properties {
 // }
 
 pub(super) struct Property {
-    property_name: Option<PropertyName>,
-    property_class: Option<PropertyClass>,
-    property_of: Option<PropertyOf>
+    name: Option<PropertyName>,
+    class: Option<PropertyClass>,
+    of: Option<PropertyOf>
 }
 
 pub(crate) struct PropertyName {

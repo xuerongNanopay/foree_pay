@@ -6,7 +6,7 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
-use crate::{feature::Feature, token::{self, features}};
+use crate::{feature::{Feature, Features}, token::{self, features}};
 
 #[derive(Default)]
 pub(crate) struct StructParser {
@@ -97,39 +97,6 @@ impl syn::parse::Parse for UseStatements {
         
         Ok(Self{
             use_statements,
-        })
-    }
-}
-
-pub struct Features {
-    features: Punctuated<Ident, Token![,]>,
-    feature_set: HashSet<Feature>
-}
-
-impl syn::parse::Parse for Features {
-    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::features>()?;
-        input.parse::<syn::Token![:]>()?;
-
-        let content;
-        bracketed!(content in input);
-
-        let features = Punctuated::<Ident, Token![,]>::parse_terminated(&content)?;
-
-        let mut feature_set = HashSet::new();
-        for feature in features.iter() {
-            let f = format!("{}", feature);
-
-            if let Ok(f) = f.parse() {
-                feature_set.insert(f);
-            } else {
-                return Err(syn::Error::new(feature.span(), format!("unknown feature `{}`", f)));
-            }
-        }
-
-        Ok(Self{
-            features,
-            feature_set
         })
     }
 }

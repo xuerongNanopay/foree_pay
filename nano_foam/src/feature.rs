@@ -7,7 +7,7 @@ use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, Ident, Token};
 use crate::token;
 
 #[derive(Debug, Eq, PartialEq, Hash)]
-pub(super) enum Feature {
+pub(crate) enum Feature {
     JSON,
     XML,
     SQL

@@ -6,6 +6,8 @@ use syn::{parse::ParseStream, punctuated::Punctuated, Ident, LitStr, Token};
 
 use crate::token;
 
+mod types;
+
 pub(super) struct Properties {
     properties: Punctuated<Property, Token![,]>
 }
@@ -37,8 +39,8 @@ impl syn::parse::Parse for PropertyName {
 
 impl ToTokens for PropertyName {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let struct_name = Ident::new(&self.name.value(), self.name.span());
-        struct_name.to_tokens(tokens);
+        let name = Ident::new(&self.name.value(), self.name.span());
+        name.to_tokens(tokens);
     }
 }
 

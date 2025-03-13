@@ -8,28 +8,28 @@ use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanne
 
 use crate::token;
 
+#[derive(Default)]
 pub(crate) struct StructParser {
-    struct_name: StructName,
-    features: Features,
+    struct_name: Option<StructName>,
+    features: Option<Features>,
     // pub(crate) table_name: String,
 }
 
 impl syn::parse::Parse for StructParser {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        let mut struct_name: Option<StructName> = None;
-        let mut features: Option<Features> = None;
+        let mut struct_parser = StructParser::default();
 
         'parsing: loop {
             match () {
                 _ if input.peek(token::name) => {
-                    struct_name = Some(input.parse::<StructName>()?);
+                    struct_parser.struct_name = Some(input.parse::<StructName>()?);
                 },
                 _ if input.peek(token::features) => {
-                    features = Some(input.parse::<Features>()?);
+                    struct_parser.features = Some(input.parse::<Features>()?);
                 },
                 _ => {
                     let remain_name: TokenStream = input.parse()?;
-                    return Err(syn::Error::new(remain_name.span(), remain_name));
+                    return Err(syn::Error::new(remain_name.span(), format!("unknown token start at `{}`", remain_name.to_string())));
                 }
             };
 
@@ -44,10 +44,7 @@ impl syn::parse::Parse for StructParser {
             break 'parsing;
         }
 
-        Ok(Self{
-            struct_name: struct_name.unwrap(),
-            features: features.unwrap(),
-        })
+        Ok(struct_parser)
     }
 }
 

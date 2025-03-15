@@ -7,6 +7,9 @@ use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned
 use crate::token;
 
 mod types;
+mod json;
+mod xml;
+mod sql;
 
 pub(super) struct Properties {
     properties: Punctuated<Property, Token![,]>

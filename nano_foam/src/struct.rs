@@ -28,7 +28,7 @@ impl syn::parse::Parse for StructParser {
                 _ if input.peek(token::features) => {
                     struct_parser.features = Some(input.parse::<Features>()?);
                 },
-                _ if input.peek(token::sql) => {
+                _ if input.peek(token::sql_config) => {
                     struct_parser.sql_config = Some(input.parse::<SqlConfig>()?);
                 },
                 _ => {

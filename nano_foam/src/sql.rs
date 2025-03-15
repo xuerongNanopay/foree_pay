@@ -13,7 +13,7 @@ pub(crate) struct SqlConfig {
 
 impl syn::parse::Parse for SqlConfig {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::sql>()?;
+        input.parse::<token::sql_config>()?;
         input.parse::<syn::Token![:]>()?;
         let content;
         braced!(content in input);

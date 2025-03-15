@@ -4,7 +4,7 @@ use std::{collections::HashSet, fmt::format};
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
+use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 
 use crate::{feature::{Feature, Features}, property::Properties, sql::SqlConfig, token::{self, features}};
 
@@ -89,7 +89,7 @@ impl ToTokens for StructName {
     }
 }
 
-pub struct UseStatements {
+pub(crate) struct UseStatements {
     use_statements: Punctuated<LitStr, Token![,]>
 }
 
@@ -105,6 +105,29 @@ impl syn::parse::Parse for UseStatements {
         
         Ok(Self{
             use_statements,
+        })
+    }
+}
+
+pub(crate) struct Transient {
+    value: LitBool
+}
+
+impl Transient {
+    fn value(&self) -> bool {
+        self.value.value()
+    }
+}
+
+impl syn::parse::Parse for Transient {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::transient>()?;
+        input.parse::<syn::Token![:]>()?;
+        
+        let value = input.parse::<LitBool>()?;
+        
+        Ok(Self{
+            value
         })
     }
 }

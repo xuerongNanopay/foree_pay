@@ -23,7 +23,7 @@ impl syn::parse::Parse for PropertySql {
 
         'parsing: loop {
             match () {
-                _ if content.peek(token::table_name) => {
+                _ if content.peek(token::column_name) => {
                     property_sql.column_name = Some(content.parse::<SqlColumnName>()?);
                 },
                 _ if content.peek(token::transient) => {
@@ -59,7 +59,7 @@ pub(crate) struct SqlColumnName {
 
 impl syn::parse::Parse for SqlColumnName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::table_name>()?;
+        input.parse::<token::column_name>()?;
         input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
         

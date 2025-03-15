@@ -4,7 +4,7 @@ foam_struct_proc!{
     name: "Aaaa",
     features: [JSON, XML],
     sql: {
-
+        table_name: "users",
     }
 }
 

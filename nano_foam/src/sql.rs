@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use proc_macro2::TokenStream;
-use syn::{bracketed, parse::ParseStream, spanned::Spanned, LitStr};
+use syn::{braced, parse::ParseStream, spanned::Spanned, LitStr};
 
 use crate::token;
 
@@ -13,10 +13,10 @@ pub(crate) struct SqlConfig {
 
 impl syn::parse::Parse for SqlConfig {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::features>()?;
+        input.parse::<token::sql>()?;
         input.parse::<syn::Token![:]>()?;
         let content;
-        bracketed!(content in input);
+        braced!(content in input);
 
         let mut sql_config = SqlConfig::default();
 
@@ -29,8 +29,10 @@ impl syn::parse::Parse for SqlConfig {
                     sql_config.db_name = Some(content.parse::<DBName>()?);
                 },
                 _ => {
-                    let remain_name: TokenStream = content.parse()?;
-                    return Err(syn::Error::new(remain_name.span(), format!("unknown token start at `{}`", remain_name.to_string())));
+                    if ! content.is_empty() {
+                        let remain_name: TokenStream = content.parse()?;
+                        return Err(syn::Error::new(remain_name.span(), format!("unknown token start at `{}`", remain_name.to_string())));
+                    }
                 }
             };
 

@@ -3,7 +3,7 @@ use nano_foam::foam_struct_proc;
 foam_struct_proc!{
     name: "Aaaa",
     features: [JSON, XML],
-    sql_config: {
+    sql: {
         table_name: "users",
     },
     
@@ -11,6 +11,9 @@ foam_struct_proc!{
         {
             name: "foo",
             r#type: "aaa",
+            sql: {
+                
+            }
         }
     ]
 }

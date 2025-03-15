@@ -2,6 +2,7 @@
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use sql::PropertySql;
 use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
 use crate::token;
@@ -32,6 +33,7 @@ impl syn::parse::Parse for Properties {
 pub(super) struct Property {
     name: Option<PropertyName>,
     r#type: Option<PropertyType>,
+    sql_config: Option<PropertySql>
 }
 
 impl syn::parse::Parse for Property {
@@ -48,6 +50,9 @@ impl syn::parse::Parse for Property {
                 },
                 _ if content.peek(token::r#type) => {
                     property.r#type = Some(content.parse::<PropertyType>()?);
+                },
+                _ if content.peek(token::sql) => {
+                    property.sql_config = Some(content.parse::<PropertySql>()?);
                 },
                 _ => {
                     if ! content.is_empty() {

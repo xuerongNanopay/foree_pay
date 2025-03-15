@@ -7,9 +7,11 @@ foam_struct_proc!{
         table_name: "users",
     },
     
-    properties: {
-
-    }
+    properties: [
+        {
+            name: "foo",
+        }
+    ]
 }
 
 fn main() {

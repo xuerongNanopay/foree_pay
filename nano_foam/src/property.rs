@@ -2,7 +2,7 @@
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse::ParseStream, punctuated::Punctuated, Ident, LitStr, Token};
+use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
 use crate::token;
 
@@ -12,12 +12,61 @@ pub(super) struct Properties {
     properties: Punctuated<Property, Token![,]>
 }
 
-// impl syn::parse::Parse for Properties {
-// }
+impl syn::parse::Parse for Properties {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::properties>()?;
+        input.parse::<syn::Token![:]>()?;
+        let content;
+        bracketed!(content in input);
 
+        let properties = Punctuated::<Property, Token![,]>::parse_terminated(&content)?;
+
+        Ok(Self { properties })
+    }
+}
+
+#[derive(Default)]
 pub(super) struct Property {
     name: Option<PropertyName>,
-    class: Option<PropertyClass>,
+    r#type: Option<PropertyType>,
+}
+
+impl syn::parse::Parse for Property {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        let content;
+        braced!(content in input);
+
+        let mut property = Property::default();
+
+        'parsing: loop {
+            match () {
+                _ if content.peek(token::name) => {
+                    property.name = Some(content.parse::<PropertyName>()?);
+                },
+                _ if content.peek(token::r#type) => {
+                    property.r#type = Some(content.parse::<PropertyType>()?);
+                },
+                _ => {
+                    if ! content.is_empty() {
+                        let remain_name: TokenStream = content.parse()?;
+                        return Err(syn::Error::new(remain_name.span(), format!("unknown token start at `{}`", remain_name.to_string())));
+                    }
+                }
+            };
+
+            if content.peek(syn::Token![,]) {
+                content.parse::<syn::Token![,]>()?;
+                
+                if !content.is_empty() {
+                    continue 'parsing;
+                }
+            }
+
+            break 'parsing;
+        }
+
+        Ok(property)
+    }
 }
 
 pub(crate) struct PropertyName {
@@ -29,12 +78,13 @@ impl syn::parse::Parse for PropertyName {
         input.parse::<token::name>()?;
         input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
-
+        
         Ok(Self{
             name,
         })
     }
 }
+
 
 impl ToTokens for PropertyName {
     fn to_tokens(&self, tokens: &mut TokenStream) {
@@ -43,19 +93,19 @@ impl ToTokens for PropertyName {
     }
 }
 
-pub(crate) struct PropertyClass {
-    class: LitStr,
+pub(crate) struct PropertyType {
+    r#type: LitStr,
 
 }
 
-impl syn::parse::Parse for PropertyClass {
+impl syn::parse::Parse for PropertyType {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::class>()?;
+        input.parse::<token::r#type>()?;
         input.parse::<syn::Token![:]>()?;
-        let class: LitStr = input.parse()?;
+        let r#type: LitStr = input.parse()?;
         
         Ok(Self{
-            class,
+            r#type,
         })
     }
 }

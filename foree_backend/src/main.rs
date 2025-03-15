@@ -15,6 +15,14 @@ foam_struct_proc!{
                 column_name: "foo",
                 transient: true,
             }
+        },
+        {
+            name: "bar",
+            r#type: "aaa",
+            sql: {
+                column_name: "bar",
+                transient: true,
+            }
         }
     ]
 }

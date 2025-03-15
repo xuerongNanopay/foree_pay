@@ -3,7 +3,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use sql::PropertySql;
-use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
+use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 
 use crate::token;
 
@@ -33,7 +33,8 @@ impl syn::parse::Parse for Properties {
 pub(super) struct Property {
     name: Option<PropertyName>,
     r#type: Option<PropertyType>,
-    sql_config: Option<PropertySql>
+    optional: Option<Optinal>,
+    sql_config: Option<PropertySql>,
 }
 
 impl syn::parse::Parse for Property {
@@ -50,6 +51,9 @@ impl syn::parse::Parse for Property {
                 },
                 _ if content.peek(token::r#type) => {
                     property.r#type = Some(content.parse::<PropertyType>()?);
+                },
+                _ if content.peek(token::optional) => {
+                    property.optional = Some(content.parse::<Optinal>()?);
                 },
                 _ if content.peek(token::sql) => {
                     property.sql_config = Some(content.parse::<PropertySql>()?);
@@ -114,6 +118,29 @@ impl syn::parse::Parse for PropertyType {
         
         Ok(Self{
             r#type,
+        })
+    }
+}
+
+pub(crate) struct Optinal {
+    value: LitBool
+}
+
+impl Optinal {
+    fn value(&self) -> bool {
+        self.value.value()
+    }
+}
+
+impl syn::parse::Parse for Optinal {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::optional>()?;
+        input.parse::<syn::Token![:]>()?;
+        
+        let value = input.parse::<LitBool>()?;
+        
+        Ok(Self{
+            value
         })
     }
 }

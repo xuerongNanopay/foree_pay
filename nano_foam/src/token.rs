@@ -13,3 +13,4 @@ syn::custom_keyword!(xml);
 syn::custom_keyword!(json);
 syn::custom_keyword!(properties);
 syn::custom_keyword!(transient);
+syn::custom_keyword!(optional);

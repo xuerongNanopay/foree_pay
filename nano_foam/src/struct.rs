@@ -6,12 +6,13 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitStr, Token};
 
-use crate::{feature::{Feature, Features}, token::{self, features}};
+use crate::{feature::{Feature, Features}, sql::SqlConfig, token::{self, features}};
 
 #[derive(Default)]
 pub(crate) struct StructParser {
     struct_name: Option<StructName>,
     features: Option<Features>,
+    sql_config: Option<SqlConfig>,
     // pub(crate) table_name: String,
 }
 
@@ -26,6 +27,9 @@ impl syn::parse::Parse for StructParser {
                 },
                 _ if input.peek(token::features) => {
                     struct_parser.features = Some(input.parse::<Features>()?);
+                },
+                _ if input.peek(token::sql) => {
+                    struct_parser.sql_config = Some(input.parse::<SqlConfig>()?);
                 },
                 _ => {
                     let remain_name: TokenStream = input.parse()?;

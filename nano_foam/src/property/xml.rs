@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-#![allow(unused)]
-
 use proc_macro2::TokenStream;
 use syn::{braced, parse::ParseStream, spanned::Spanned, LitStr};
 
@@ -9,7 +7,7 @@ use crate::{r#struct::Transient, token};
 
 #[derive(Default)]
 pub(crate) struct PropertyXml {
-    column_name: Option<SqlColumnName>,
+    tag_name: Option<XmlTagName>,
     transient: Option<Transient>,
 }
 
@@ -25,8 +23,8 @@ impl syn::parse::Parse for PropertyXml {
 
         'parsing: loop {
             match () {
-                _ if content.peek(token::table_name) => {
-                    property_sql.column_name = Some(content.parse::<SqlColumnName>()?);
+                _ if content.peek(token::xml_tag) => {
+                    property_sql.tag_name = Some(content.parse::<XmlTagName>()?);
                 },
                 _ if content.peek(token::transient) => {
                     property_sql.transient = Some(content.parse::<Transient>()?);
@@ -55,11 +53,17 @@ impl syn::parse::Parse for PropertyXml {
 
 }
 
-pub(crate) struct SqlColumnName {
+pub(crate) struct XmlTagName {
     name: LitStr,
 }
 
-impl syn::parse::Parse for SqlColumnName {
+impl XmlTagName {
+    pub(crate) fn value(&self) -> String {
+        self.name.value()
+    }
+}
+
+impl syn::parse::Parse for XmlTagName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::table_name>()?;
         input.parse::<syn::Token![:]>()?;

@@ -3,11 +3,14 @@
 trait PropertyClass {
 }
 
-fn to_property_class(c: &str) -> Result<Box<dyn PropertyClass>, ()> {
+fn new_property(c: &str) -> Result<Box<dyn PropertyClass>, ()> {
     Ok(match c {
         "Int" => Box::new(IntProperty),
+        "UInt" => Box::new(UIntProperty),
         "Long" => Box::new(LongProperty),
+        "ULong" => Box::new(ULongProperty),
         "Double" => Box::new(DoubleProperty),
+        "String" => Box::new(StringProperty),
         "Date" => Box::new(DateProperty),
         _ => {
             return Err(())
@@ -32,9 +35,22 @@ impl PropertyClass for IntProperty {
 
 }
 
+struct UIntProperty;
+
+impl PropertyClass for UIntProperty {
+
+}
+
 struct LongProperty;
 
 impl PropertyClass for LongProperty {
+
+}
+
+
+struct ULongProperty;
+
+impl PropertyClass for ULongProperty {
 
 }
 
@@ -47,5 +63,11 @@ impl PropertyClass for DoubleProperty {
 struct DateProperty;
 
 impl PropertyClass for DateProperty {
+
+}
+
+struct StringProperty;
+
+impl PropertyClass for StringProperty {
 
 }

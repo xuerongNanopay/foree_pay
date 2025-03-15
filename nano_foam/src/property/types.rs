@@ -12,6 +12,9 @@ fn new_property(c: &str) -> Result<Box<dyn PropertyClass>, ()> {
         "Double" => Box::new(DoubleProperty),
         "String" => Box::new(StringProperty),
         "Date" => Box::new(DateProperty),
+        "Struct" => Box::new(StructProperty),
+        "Enum" => Box::new(EnumProperty),
+        "Vec" => Box::new(VecProperty),
         _ => {
             return Err(())
         }
@@ -69,5 +72,23 @@ impl PropertyClass for DateProperty {
 struct StringProperty;
 
 impl PropertyClass for StringProperty {
+
+}
+
+struct StructProperty;
+
+impl PropertyClass for StructProperty {
+
+}
+
+struct EnumProperty;
+
+impl PropertyClass for EnumProperty {
+
+}
+
+struct VecProperty;
+
+impl PropertyClass for VecProperty {
 
 }

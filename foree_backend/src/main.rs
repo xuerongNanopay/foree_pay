@@ -10,6 +10,7 @@ foam_struct_proc!{
     properties: [
         {
             name: "foo",
+            r#type: "aaa",
         }
     ]
 }

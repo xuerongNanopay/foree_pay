@@ -12,7 +12,8 @@ foam_struct_proc!{
             name: "foo",
             r#type: "aaa",
             sql: {
-                
+                table_name: "foo",
+                transient: true,
             }
         }
     ]

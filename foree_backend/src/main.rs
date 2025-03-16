@@ -30,7 +30,8 @@ foam_struct_proc!{
         {
             fn_name: "getById",
             query: r#"
-            SELECT 
+            SELECT    #foo, #bar 
+            from #Aaaa;
             
             "#,
         }

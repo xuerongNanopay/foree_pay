@@ -111,17 +111,90 @@ impl syn::parse::Parse for SqlQueries {
     }
 }
 
+#[derive(Default)]
 pub(crate) struct SqlQuery {
-
+    fn_name: Option<FnName>,
+    query: Option<Query>,
 }
 
 impl syn::parse::Parse for SqlQuery {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
-        input.parse::<token::db_name>()?;
+        let content;
+        braced!(content in input);
+
+        let mut sql_query = SqlQuery::default();
+
+        'parsing: loop {
+            match () {
+                _ if content.peek(token::fn_name) => {
+                    sql_query.fn_name = Some(content.parse::<FnName>()?);
+                },
+                _ if content.peek(token::query) => {
+                    sql_query.query = Some(content.parse::<Query>()?);
+                },
+                _ => {
+                    if ! content.is_empty() {
+                        let remain_name: TokenStream = content.parse()?;
+                        return Err(syn::Error::new(remain_name.span(), format!("unknown token start at `{}`", remain_name.to_string())));
+                    }
+                }
+            };
+
+            if content.peek(syn::Token![,]) {
+                content.parse::<syn::Token![,]>()?;
+                
+                if !content.is_empty() {
+                    continue 'parsing;
+                }
+            }
+
+            break 'parsing;
+        }
+
+        Ok(sql_query)
+    }
+}
+
+pub(crate) struct FnName {
+    name: LitStr,
+}
+
+impl FnName {
+    pub(crate) fn value(&self) -> String {
+        self.name.value()
+    }
+}
+
+impl syn::parse::Parse for FnName {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::fn_name>()?;
         input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
-
+        
         Ok(Self{
+            name,
+        })
+    }
+}
+
+pub(crate) struct Query {
+    name: LitStr,
+}
+
+impl Query {
+    pub(crate) fn value(&self) -> String {
+        self.name.value()
+    }
+}
+
+impl syn::parse::Parse for Query {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::query>()?;
+        input.parse::<syn::Token![:]>()?;
+        let name: LitStr = input.parse()?;
+        
+        Ok(Self{
+            name,
         })
     }
 }

@@ -28,7 +28,7 @@ foam_struct_proc!{
 
     sql_queries: [
         {
-            method_name: "getById",
+            fn_name: "getById",
             query: "SELECT "
         }
     ]

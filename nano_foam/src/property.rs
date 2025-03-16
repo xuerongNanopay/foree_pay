@@ -85,6 +85,12 @@ pub(crate) struct PropertyName {
     name: LitStr,
 }
 
+impl PropertyName {
+    pub(crate) fn value(&self) -> String {
+        self.name.value()
+    }
+}
+
 impl syn::parse::Parse for PropertyName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::name>()?;

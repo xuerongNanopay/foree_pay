@@ -17,3 +17,5 @@ syn::custom_keyword!(properties);
 syn::custom_keyword!(transient);
 syn::custom_keyword!(optional);
 syn::custom_keyword!(sql_queries);
+syn::custom_keyword!(fn_name);
+syn::custom_keyword!(query);

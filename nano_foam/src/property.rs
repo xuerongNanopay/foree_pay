@@ -13,7 +13,7 @@ mod xml;
 mod sql;
 
 pub(super) struct Properties {
-    properties: Punctuated<Property, Token![,]>
+    properties: Punctuated<Property, syn::Token![,]>
 }
 
 impl syn::parse::Parse for Properties {

@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use proc_macro2::TokenStream;
-use syn::{braced, parse::ParseStream, spanned::Spanned, LitStr};
+use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, token::Token, LitStr};
 
 use crate::token;
 
@@ -90,6 +90,38 @@ impl syn::parse::Parse for DBName {
 
         Ok(Self{
             name,
+        })
+    }
+}
+
+pub(crate) struct SqlQueries {
+    queries: Punctuated<SqlQuery, syn::Token![,]>
+}
+
+impl syn::parse::Parse for SqlQueries {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::sql_queries>()?;
+        input.parse::<syn::Token![:]>()?;
+        let content;
+        bracketed!(content in input);
+
+        let queries = Punctuated::<SqlQuery, syn::Token![,]>::parse_terminated(&content)?;
+
+        Ok(Self { queries })
+    }
+}
+
+pub(crate) struct SqlQuery {
+
+}
+
+impl syn::parse::Parse for SqlQuery {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::db_name>()?;
+        input.parse::<syn::Token![:]>()?;
+        let name: LitStr = input.parse()?;
+
+        Ok(Self{
         })
     }
 }

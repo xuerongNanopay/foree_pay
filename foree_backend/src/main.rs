@@ -24,6 +24,13 @@ foam_struct_proc!{
                 transient: true,
             }
         }
+    ],
+
+    sql_queries: [
+        {
+            method_name: "getById",
+            query: "SELECT "
+        }
     ]
 }
 

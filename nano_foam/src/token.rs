@@ -16,3 +16,4 @@ syn::custom_keyword!(json_key);
 syn::custom_keyword!(properties);
 syn::custom_keyword!(transient);
 syn::custom_keyword!(optional);
+syn::custom_keyword!(sql_queries);

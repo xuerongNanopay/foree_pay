@@ -19,3 +19,4 @@ syn::custom_keyword!(optional);
 syn::custom_keyword!(sql_queries);
 syn::custom_keyword!(fn_name);
 syn::custom_keyword!(query);
+syn::custom_keyword!(multiple);

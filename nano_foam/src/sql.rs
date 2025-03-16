@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use proc_macro2::TokenStream;
-use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, token::Token, LitStr};
+use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, token::Token, LitBool, LitStr};
 
 use crate::token;
 
@@ -115,6 +115,7 @@ impl syn::parse::Parse for SqlQueries {
 pub(crate) struct SqlQuery {
     fn_name: Option<FnName>,
     query: Option<Query>,
+    multiple: Option<Multiple>,
 }
 
 impl syn::parse::Parse for SqlQuery {
@@ -131,6 +132,9 @@ impl syn::parse::Parse for SqlQuery {
                 },
                 _ if content.peek(token::query) => {
                     sql_query.query = Some(content.parse::<Query>()?);
+                },
+                _ if content.peek(token::multiple) => {
+                    sql_query.multiple = Some(content.parse::<Multiple>()?);
                 },
                 _ => {
                     if ! content.is_empty() {
@@ -195,6 +199,29 @@ impl syn::parse::Parse for Query {
 
         Ok(Self{
             name,
+        })
+    }
+}
+
+pub(crate) struct Multiple {
+    value: LitBool
+}
+
+impl Multiple {
+    fn value(&self) -> bool {
+        self.value.value()
+    }
+}
+
+impl syn::parse::Parse for Multiple {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> {
+        input.parse::<token::multiple>()?;
+        input.parse::<syn::Token![:]>()?;
+        
+        let value = input.parse::<LitBool>()?;
+        
+        Ok(Self{
+            value
         })
     }
 }

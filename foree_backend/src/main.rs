@@ -29,7 +29,10 @@ foam_struct_proc!{
     sql_queries: [
         {
             fn_name: "getById",
-            query: "SELECT "
+            query: r#"
+            SELECT 
+            
+            "#,
         }
     ]
 }

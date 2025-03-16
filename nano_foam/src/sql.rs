@@ -183,7 +183,7 @@ pub(crate) struct Query {
 
 impl Query {
     pub(crate) fn value(&self) -> String {
-        self.name.value()
+        self.name.value().replace(|c: char| c.is_whitespace(), "")
     }
 }
 
@@ -192,7 +192,6 @@ impl syn::parse::Parse for Query {
         input.parse::<token::query>()?;
         input.parse::<syn::Token![:]>()?;
         let name: LitStr = input.parse()?;
-        
         Ok(Self{
             name,
         })

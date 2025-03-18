@@ -7,6 +7,7 @@ mod token;
 mod json;
 mod xml;
 mod sql;
+mod tests;
 
 #[proc_macro]
 pub fn foam_struct_proc(input: TokenStream) -> TokenStream {

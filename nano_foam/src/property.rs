@@ -5,7 +5,7 @@ use quote::{quote, ToTokens};
 use sql::PropertySql;
 use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 
-use crate::token;
+use crate::token::{self, properties};
 
 
 mod types;
@@ -30,6 +30,27 @@ impl syn::parse::Parse for Properties {
     }
 }
 
+impl Properties {
+    pub fn to_struct_fields_token_stream(&self) -> Result<TokenStream, TokenStream> {
+        let tmp_fields = self.properties.iter().map(|p| p.to_struct_field_token_stream()).collect::<Vec<_>>();
+        
+        let mut fields = Vec::with_capacity(tmp_fields.len());
+
+        for field in tmp_fields {
+            match field {
+                Err(t) => { return Err(t); },
+                Ok(t) => {
+                    fields.push(t);
+                }
+            }
+        }
+
+        Ok(quote! {
+            #(#fields)*
+        })
+    }
+}
+
 #[derive(Default)]
 pub(super) struct Property {
     name: Option<PropertyName>,
@@ -39,9 +60,41 @@ pub(super) struct Property {
 }
 
 impl Property {
-    pub fn to_token_stream(&self) -> Result<TokenStream, TokenStream> {
+    pub fn property_name(&self) -> String {
+        self.name.as_ref().unwrap().value()
+    }
+
+    pub fn to_struct_field_token_stream(&self) -> Result<TokenStream, TokenStream> {
+        let name = match self.name.as_ref() {
+            Some(v) => { 
+                if v.value().trim() == "" {
+                    let txt = format!("`name` is requireds in property.");
+                    return Err(quote! {{
+                        compile_error!(#txt);
+                    }})
+                }
+                v
+            },
+            _ => {
+                let txt = format!("`name` is requireds in property.");
+                return Err(quote! {{
+                    compile_error!(#txt);
+                }})
+            }
+        };
+
+        let field_type = match self.r#type.as_ref() {
+            Some(v) => { v },
+            _ => {
+                let txt = format!("`r#type` is requireds in property.");
+                return Err(quote! {{
+                    compile_error!(#txt);
+                }})
+            }
+        };
+
         Ok(quote! {
-        
+            #name: #field_type,
         })
     }
 }

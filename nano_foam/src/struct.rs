@@ -163,9 +163,14 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
         }
     };
 
+    let struct_fields = match properties.to_struct_fields_token_stream() {
+        Ok(o) => o ,
+        Err(e) => return e,
+    };
+
     quote::quote! {
         struct #struct_name {
-            a: #test,
+            #struct_fields
         }
 
         #impls

@@ -3,7 +3,7 @@
 use std::{collections::HashSet, fmt::format};
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{format_ident, quote, ToTokens};
 use syn::{bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 
 use crate::{feature::{Feature, Features}, property::Properties, sql::{SqlConfig, SqlQueries}, token::{self, features}};
@@ -157,9 +157,17 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
         Some(p) => { p }
     };
 
+    let test = format_ident!("i32");
+    let impls = quote! {
+        impl #struct_name {
+        }
+    };
+
     quote::quote! {
         struct #struct_name {
-            a: u32,
+            a: #test,
         }
+
+        #impls
     }
 }

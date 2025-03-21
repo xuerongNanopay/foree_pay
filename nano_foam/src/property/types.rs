@@ -1,9 +1,9 @@
 #![allow(unused)]
 
-trait PropertyClass {
+trait PropertyInfo {
 }
 
-fn new_property(c: &str) -> Result<Box<dyn PropertyClass>, ()> {
+fn new_property(c: &str) -> Result<Box<dyn PropertyInfo>, ()> {
     Ok(match c {
         "Int" => Box::new(IntProperty),
         "UInt" => Box::new(UIntProperty),
@@ -34,61 +34,61 @@ fn new_property(c: &str) -> Result<Box<dyn PropertyClass>, ()> {
 
 struct IntProperty;
 
-impl PropertyClass for IntProperty {
+impl PropertyInfo for IntProperty {
 
 }
 
 struct UIntProperty;
 
-impl PropertyClass for UIntProperty {
+impl PropertyInfo for UIntProperty {
 
 }
 
 struct LongProperty;
 
-impl PropertyClass for LongProperty {
+impl PropertyInfo for LongProperty {
 
 }
 
 
 struct ULongProperty;
 
-impl PropertyClass for ULongProperty {
+impl PropertyInfo for ULongProperty {
 
 }
 
 struct DoubleProperty;
 
-impl PropertyClass for DoubleProperty {
+impl PropertyInfo for DoubleProperty {
 
 }
 
 struct DateProperty;
 
-impl PropertyClass for DateProperty {
+impl PropertyInfo for DateProperty {
 
 }
 
 struct StringProperty;
 
-impl PropertyClass for StringProperty {
+impl PropertyInfo for StringProperty {
 
 }
 
 struct StructProperty;
 
-impl PropertyClass for StructProperty {
+impl PropertyInfo for StructProperty {
 
 }
 
 struct EnumProperty;
 
-impl PropertyClass for EnumProperty {
+impl PropertyInfo for EnumProperty {
 
 }
 
 struct VecProperty;
 
-impl PropertyClass for VecProperty {
+impl PropertyInfo for VecProperty {
 
 }

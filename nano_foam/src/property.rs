@@ -1,11 +1,12 @@
 #![allow(unused)]
 
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use sql::PropertySql;
 use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 
 use crate::token;
+
 
 mod types;
 mod json;
@@ -35,6 +36,14 @@ pub(super) struct Property {
     r#type: Option<PropertyType>,
     optional: Option<Optinal>,
     sql_config: Option<PropertySql>,
+}
+
+impl Property {
+    pub fn to_token_stream(&self) -> Result<TokenStream, TokenStream> {
+        Ok(quote! {
+        
+        })
+    }
 }
 
 impl syn::parse::Parse for Property {
@@ -82,12 +91,12 @@ impl syn::parse::Parse for Property {
 }
 
 pub(crate) struct PropertyName {
-    name: LitStr,
+    value: LitStr,
 }
 
 impl PropertyName {
     pub(crate) fn value(&self) -> String {
-        self.name.value()
+        self.value.value()
     }
 }
 
@@ -95,10 +104,10 @@ impl syn::parse::Parse for PropertyName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::name>()?;
         input.parse::<syn::Token![:]>()?;
-        let name: LitStr = input.parse()?;
+        let value: LitStr = input.parse()?;
         
         Ok(Self{
-            name,
+            value,
         })
     }
 }
@@ -106,24 +115,29 @@ impl syn::parse::Parse for PropertyName {
 
 impl ToTokens for PropertyName {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let name = Ident::new(&self.name.value(), self.name.span());
-        name.to_tokens(tokens);
+        let value = Ident::new(&self.value.value(), self.value.span());
+        value.to_tokens(tokens);
     }
 }
 
 pub(crate) struct PropertyType {
-    r#type: LitStr,
+    value: LitStr,
+}
 
+impl PropertyType {
+    pub(crate) fn value(&self) -> String {
+        self.value.value()
+    }
 }
 
 impl syn::parse::Parse for PropertyType {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::r#type>()?;
         input.parse::<syn::Token![:]>()?;
-        let r#type: LitStr = input.parse()?;
+        let value: LitStr = input.parse()?;
         
         Ok(Self{
-            r#type,
+            value,
         })
     }
 }

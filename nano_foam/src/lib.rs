@@ -21,10 +21,3 @@ pub fn foam_struct_proc(input: TokenStream) -> TokenStream {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-    }
-}

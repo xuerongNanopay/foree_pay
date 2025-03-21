@@ -10,7 +10,7 @@ foam_struct_proc!{
     properties: [
         {
             name: "foo",
-            r#type: "aaa",
+            r#type: aaa,
             sql: {
                 column_name: "foo",
                 transient: true,
@@ -18,7 +18,7 @@ foam_struct_proc!{
         },
         {
             name: "bar",
-            r#type: "aaa",
+            r#type: aaa,
             sql: {
                 column_name: "bar",
                 transient: true,

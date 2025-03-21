@@ -121,12 +121,12 @@ impl ToTokens for PropertyName {
 }
 
 pub(crate) struct PropertyType {
-    value: LitStr,
+    value: Ident,
 }
 
 impl PropertyType {
     pub(crate) fn value(&self) -> String {
-        self.value.value()
+        self.value.to_string()
     }
 }
 
@@ -134,11 +134,17 @@ impl syn::parse::Parse for PropertyType {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::r#type>()?;
         input.parse::<syn::Token![:]>()?;
-        let value: LitStr = input.parse()?;
+        let value: Ident = input.parse()?;
         
         Ok(Self{
             value,
         })
+    }
+}
+
+impl ToTokens for PropertyType {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.value.to_tokens(tokens);
     }
 }
 

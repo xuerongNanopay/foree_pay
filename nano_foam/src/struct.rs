@@ -60,18 +60,14 @@ impl syn::parse::Parse for StructParser {
     }
 }
 
-pub(crate) fn expand(parser: StructParser) -> TokenStream {
-    let struct_name = &parser.struct_name;
-
-    quote::quote! {
-        struct #struct_name {
-            a: u32,
-        }
-    }
-}
-
 pub(crate) struct StructName {
     name: LitStr,
+}
+
+impl StructName {
+    pub(crate) fn value(&self) -> String {
+        self.name.value()
+    }
 }
 
 impl syn::parse::Parse for StructName {
@@ -133,5 +129,37 @@ impl syn::parse::Parse for Transient {
         Ok(Self{
             value
         })
+    }
+}
+
+pub(crate) fn expand(parser: StructParser) -> TokenStream {
+    let struct_name = &parser.struct_name;
+    let struct_name = match struct_name {
+        None => {
+            let txt = format!("FoamStruct require name");
+            return quote::quote! {
+                compile_error!(#txt);
+            }
+        },
+        Some(s) => { s }
+    };
+
+    //TODO: Properties.
+    let properties = &parser.properties;
+
+    let properties = match properties {
+        None => {
+            let txt = format!("FoamStruct {} is missing properties", struct_name.value());
+            return quote::quote! {
+                compile_error!(#txt);
+            }
+        },
+        Some(p) => { p }
+    };
+
+    quote::quote! {
+        struct #struct_name {
+            a: u32,
+        }
     }
 }

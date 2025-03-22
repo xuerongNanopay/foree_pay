@@ -52,17 +52,16 @@ impl Properties {
     }
 }
 
-#[derive(Default)]
 pub(super) struct Property {
-    name: Option<PropertyName>,
-    r#type: Option<PropertyType>,
+    name: PropertyName,
+    r#type: PropertyType,
     optional: Option<Optinal>,
     sql_config: Option<PropertySql>,
 }
 
 impl Property {
     pub(crate) fn property_name(&self) -> String {
-        self.name.as_ref().unwrap().value()
+        self.name.value()
     }
 
     pub(crate) fn property_type(&self) -> Result<Box<dyn PropertyInfo>, TokenStream> {
@@ -70,33 +69,8 @@ impl Property {
     }
 
     pub(crate) fn to_struct_field_token_stream(&self) -> Result<TokenStream, TokenStream> {
-        let name = match self.name.as_ref() {
-            Some(v) => { 
-                if v.value().trim() == "" {
-                    let txt = format!("`name` is requireds in property.");
-                    return Err(quote! {{
-                        compile_error!(#txt);
-                    }})
-                }
-                v
-            },
-            _ => {
-                let txt = format!("`name` is requireds in property.");
-                return Err(quote! {{
-                    compile_error!(#txt);
-                }})
-            }
-        };
-
-        let field_type = match self.r#type.as_ref() {
-            Some(v) => { v },
-            _ => {
-                let txt = format!("`r#type` is requireds in property.");
-                return Err(quote! {{
-                    compile_error!(#txt);
-                }})
-            }
-        };
+        let name = &self.name;
+        let field_type = &self.r#type;
 
         Ok(quote! {
             #name: #field_type,
@@ -115,21 +89,24 @@ impl syn::parse::Parse for Property {
         let content;
         braced!(content in input);
 
-        let mut property = Property::default();
-
+        let mut name: Option<PropertyName> = None;
+        let mut r#type: Option<PropertyType> = None;
+        let mut optional: Option<Optinal> = None;
+        let mut sql_config: Option<PropertySql> = None;
+    
         'parsing: loop {
             match () {
                 _ if content.peek(token::name) => {
-                    property.name = Some(content.parse::<PropertyName>()?);
+                    name = Some(content.parse::<PropertyName>()?);
                 },
                 _ if content.peek(token::r#type) => {
-                    property.r#type = Some(content.parse::<PropertyType>()?);
+                    r#type = Some(content.parse::<PropertyType>()?);
                 },
                 _ if content.peek(token::optional) => {
-                    property.optional = Some(content.parse::<Optinal>()?);
+                    optional = Some(content.parse::<Optinal>()?);
                 },
                 _ if content.peek(token::sql) => {
-                    property.sql_config = Some(content.parse::<PropertySql>()?);
+                    sql_config = Some(content.parse::<PropertySql>()?);
                 },
                 _ => {
                     if ! content.is_empty() {
@@ -150,7 +127,26 @@ impl syn::parse::Parse for Property {
             break 'parsing;
         }
 
-        Ok(property)
+        let name = match name {
+            Some(v) => {v},
+            None => {
+                return Err(syn::Error::new(content.span(), format!("`name` is required in property")));
+            }
+        };
+
+        let r#type = match r#type {
+            Some(v) => {v},
+            None => {
+                return Err(syn::Error::new(content.span(), format!("`r#type` is required in property")));
+            }
+        };
+
+        Ok(Self{
+            name,
+            r#type,
+            optional,
+            sql_config,
+        })
     }
 }
 

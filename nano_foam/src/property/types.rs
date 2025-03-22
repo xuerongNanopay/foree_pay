@@ -1,20 +1,30 @@
 #![allow(unused)]
 
+use proc_macro2::TokenStream;
+use quote::quote;
+
+use super::Property;
+
 trait PropertyInfo {
+    fn to_setter_token_stream(&self, property: &Property) -> Result<TokenStream, TokenStream> {
+        Err(quote! {
+            compile_error!("Do not support");
+        })
+    }
 }
 
-fn new_property(c: &str) -> Result<Box<dyn PropertyInfo>, ()> {
+fn new_property(c: &str, field_name: TokenStream) -> Result<Box<dyn PropertyInfo>, ()> {
     Ok(match c {
-        "Int" => Box::new(IntProperty),
-        "UInt" => Box::new(UIntProperty),
-        "Long" => Box::new(LongProperty),
-        "ULong" => Box::new(ULongProperty),
-        "Double" => Box::new(DoubleProperty),
-        "String" => Box::new(StringProperty),
-        "Date" => Box::new(DateProperty),
-        "Struct" => Box::new(StructProperty),
-        "Enum" => Box::new(EnumProperty),
-        "Vec" => Box::new(VecProperty),
+        "Int" => Box::new(I32Property()),
+        "UInt" => Box::new(U32Property()),
+        "Long" => Box::new(I64Property()),
+        "ULong" => Box::new(U64Property()),
+        // "Double" => Box::new(DoubleProperty),
+        // "String" => Box::new(StringProperty),
+        // "Date" => Box::new(DateProperty),
+        // "Struct" => Box::new(StructProperty),
+        // "Enum" => Box::new(EnumProperty),
+        // "Vec" => Box::new(VecProperty),
         _ => {
             return Err(())
         }
@@ -32,62 +42,62 @@ fn new_property(c: &str) -> Result<Box<dyn PropertyInfo>, ()> {
 // }
 
 
-struct IntProperty;
+struct I32Property();
 
-impl PropertyInfo for IntProperty {
-
-}
-
-struct UIntProperty;
-
-impl PropertyInfo for UIntProperty {
+impl PropertyInfo for I32Property {
 
 }
 
-struct LongProperty;
+struct U32Property();
 
-impl PropertyInfo for LongProperty {
+impl PropertyInfo for U32Property {
+
+}
+
+struct I64Property();
+
+impl PropertyInfo for I64Property {
 
 }
 
 
-struct ULongProperty;
+struct U64Property();
 
-impl PropertyInfo for ULongProperty {
+impl PropertyInfo for U64Property {
 
 }
 
-struct DoubleProperty;
+struct DoubleProperty();
 
 impl PropertyInfo for DoubleProperty {
 
 }
 
-struct DateProperty;
+struct DateProperty();
 
 impl PropertyInfo for DateProperty {
 
 }
 
-struct StringProperty;
+struct StringProperty();
 
 impl PropertyInfo for StringProperty {
 
 }
 
-struct StructProperty;
+struct StructProperty();
 
 impl PropertyInfo for StructProperty {
 
 }
 
-struct EnumProperty;
+struct EnumProperty();
 
 impl PropertyInfo for EnumProperty {
 
 }
 
-struct VecProperty;
+struct VecProperty();
 
 impl PropertyInfo for VecProperty {
 

@@ -102,6 +102,12 @@ impl Property {
             #name: #field_type,
         })
     }
+
+    fn validate_after_parse(&self) -> Result<(), syn::Error> {
+        //TODO: 
+        Ok(())
+    }
+
 }
 
 impl syn::parse::Parse for Property {

@@ -5,7 +5,7 @@ use quote::quote;
 
 use super::Property;
 
-trait PropertyInfo {
+pub(crate) trait PropertyInfo {
     fn to_setter_token_stream(&self, property: &Property) -> Result<TokenStream, TokenStream> {
         Err(quote! {
             compile_error!("Do not support");
@@ -13,8 +13,8 @@ trait PropertyInfo {
     }
 }
 
-fn new_property(c: &str, field_name: TokenStream) -> Result<Box<dyn PropertyInfo>, ()> {
-    Ok(match c {
+pub(crate) fn new_property_info(property_type: &str) -> Result<Box<dyn PropertyInfo>, TokenStream> {
+    Ok(match property_type {
         "Int" => Box::new(I32Property()),
         "UInt" => Box::new(U32Property()),
         "Long" => Box::new(I64Property()),
@@ -28,7 +28,10 @@ fn new_property(c: &str, field_name: TokenStream) -> Result<Box<dyn PropertyInfo
         // "Enum" => Box::new(EnumProperty),
         // "Vec" => Box::new(VecProperty),
         _ => {
-            return Err(())
+            let txt = format!("unsupport property type `{}`", property_type);
+            return Err(quote! {
+                #txt;
+            });
         }
     })
 }

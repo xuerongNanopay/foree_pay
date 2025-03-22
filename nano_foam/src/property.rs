@@ -4,6 +4,7 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use sql::PropertySql;
 use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
+use types::{new_property_info, PropertyInfo};
 
 use crate::token::{self, properties};
 
@@ -60,11 +61,15 @@ pub(super) struct Property {
 }
 
 impl Property {
-    pub fn property_name(&self) -> String {
+    pub(crate) fn property_name(&self) -> String {
         self.name.as_ref().unwrap().value()
     }
 
-    pub fn to_struct_field_token_stream(&self) -> Result<TokenStream, TokenStream> {
+    pub(crate) fn property_type(&self) -> Result<Box<dyn PropertyInfo>, TokenStream> {
+        new_property_info(&self.property_name())
+    }
+
+    pub(crate) fn to_struct_field_token_stream(&self) -> Result<TokenStream, TokenStream> {
         let name = match self.name.as_ref() {
             Some(v) => { 
                 if v.value().trim() == "" {

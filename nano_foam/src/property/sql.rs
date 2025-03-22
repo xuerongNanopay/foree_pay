@@ -6,12 +6,21 @@ use syn::{braced, parse::ParseStream, spanned::Spanned, LitStr};
 use crate::{r#struct::Transient, token};
 
 #[derive(Default)]
-pub(crate) struct PropertySql {
+pub(crate) struct PropertySqlConfig {
     column_name: Option<SqlColumnName>,
     transient: Option<Transient>,
 }
 
-impl syn::parse::Parse for PropertySql {
+impl PropertySqlConfig {
+    fn column_name(&self) -> Option<String> {
+        match self.column_name.as_ref() {
+            Some(n) => { Some(n.value()) },
+            _ => None,
+        }
+    }
+}
+
+impl syn::parse::Parse for PropertySqlConfig {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::sql>()?;
         input.parse::<syn::Token![:]>()?;
@@ -19,7 +28,7 @@ impl syn::parse::Parse for PropertySql {
         let content;
         braced!(content in input);
 
-        let mut property_sql = PropertySql::default();
+        let mut property_sql = PropertySqlConfig::default();
 
         'parsing: loop {
             match () {
@@ -54,17 +63,23 @@ impl syn::parse::Parse for PropertySql {
 }
 
 pub(crate) struct SqlColumnName {
-    name: LitStr,
+    value: LitStr,
+}
+
+impl SqlColumnName {
+    pub(crate) fn value(&self) -> String {
+        self.value.value()
+    }
 }
 
 impl syn::parse::Parse for SqlColumnName {
     fn parse(input: ParseStream) -> Result<Self, syn::Error> {
         input.parse::<token::column_name>()?;
         input.parse::<syn::Token![:]>()?;
-        let name: LitStr = input.parse()?;
+        let value: LitStr = input.parse()?;
         
         Ok(Self{
-            name,
+            value,
         })
     }
 }

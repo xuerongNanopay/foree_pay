@@ -30,7 +30,7 @@ pub(crate) fn new_property_info(property_type: &str) -> Result<Box<dyn PropertyI
         _ => {
             let txt = format!("unsupport property type `{}`", property_type);
             return Err(quote! {
-                #txt;
+                compile_error!(#txt);
             });
         }
     })

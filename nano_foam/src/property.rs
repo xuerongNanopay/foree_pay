@@ -2,7 +2,7 @@
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use sql::PropertySql;
+use sql::PropertySqlConfig;
 use syn::{braced, bracketed, parse::ParseStream, punctuated::Punctuated, spanned::Spanned, Ident, LitBool, LitStr, Token};
 use types::{new_property_info, PropertyInfo};
 
@@ -56,7 +56,7 @@ pub(super) struct Property {
     name: PropertyName,
     r#type: PropertyType,
     optional: Option<Optinal>,
-    sql_config: Option<PropertySql>,
+    sql_config: Option<PropertySqlConfig>,
 }
 
 impl Property {
@@ -77,11 +77,16 @@ impl Property {
         })
     }
 
-    fn validate_after_parse(&self) -> Result<(), syn::Error> {
-        //TODO: 
-        Ok(())
-    }
+    pub(crate) fn sql_column_name(&self) -> String {
+        match self.sql_config.as_ref() {
+            Some(sql) => {
+                
+            },
+            _ => {},
+        };
 
+        self.property_name()
+    }
 }
 
 impl syn::parse::Parse for Property {
@@ -92,7 +97,7 @@ impl syn::parse::Parse for Property {
         let mut name: Option<PropertyName> = None;
         let mut r#type: Option<PropertyType> = None;
         let mut optional: Option<Optinal> = None;
-        let mut sql_config: Option<PropertySql> = None;
+        let mut sql_config: Option<PropertySqlConfig> = None;
     
         'parsing: loop {
             match () {
@@ -106,7 +111,7 @@ impl syn::parse::Parse for Property {
                     optional = Some(content.parse::<Optinal>()?);
                 },
                 _ if content.peek(token::sql) => {
-                    sql_config = Some(content.parse::<PropertySql>()?);
+                    sql_config = Some(content.parse::<PropertySqlConfig>()?);
                 },
                 _ => {
                     if ! content.is_empty() {

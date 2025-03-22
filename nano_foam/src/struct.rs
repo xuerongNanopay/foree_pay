@@ -158,6 +158,7 @@ pub(crate) fn expand(parser: StructParser) -> TokenStream {
     };
 
     let test = format_ident!("i32");
+
     let impls = quote! {
         impl #struct_name {
         }

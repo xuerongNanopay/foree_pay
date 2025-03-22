@@ -19,6 +19,8 @@ fn new_property(c: &str, field_name: TokenStream) -> Result<Box<dyn PropertyInfo
         "UInt" => Box::new(U32Property()),
         "Long" => Box::new(I64Property()),
         "ULong" => Box::new(U64Property()),
+        "Float" => Box::new(F32Property()),
+        "Double" => Box::new(F64Property()),
         // "Double" => Box::new(DoubleProperty),
         // "String" => Box::new(StringProperty),
         // "Date" => Box::new(DateProperty),
@@ -67,9 +69,15 @@ impl PropertyInfo for U64Property {
 
 }
 
-struct DoubleProperty();
+struct F32Property();
 
-impl PropertyInfo for DoubleProperty {
+impl PropertyInfo for F32Property {
+
+}
+
+struct F64Property();
+
+impl PropertyInfo for F64Property {
 
 }
 

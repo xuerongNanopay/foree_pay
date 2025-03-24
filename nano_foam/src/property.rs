@@ -64,8 +64,12 @@ impl Property {
         self.name.value()
     }
 
-    pub(crate) fn property_type(&self) -> Result<Box<dyn PropertyInfo>, TokenStream> {
-        new_property_info(&self.property_name())
+    pub(crate) fn property_type(&self) -> String {
+        self.r#type.value()
+    }
+
+    pub(crate) fn property_info(&self) -> Result<Box<dyn PropertyInfo>, TokenStream> {
+        new_property_info(&self.property_type())
     }
 
     pub(crate) fn to_struct_field_token_stream(&self) -> Result<TokenStream, TokenStream> {

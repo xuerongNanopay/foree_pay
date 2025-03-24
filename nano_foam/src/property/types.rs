@@ -16,11 +16,11 @@ pub(crate) trait PropertyInfo {
 pub(crate) fn new_property_info(property: &Property) -> Result<Box<dyn PropertyInfo + '_>, TokenStream> {
     Ok(match property.property_type().as_str() {
         "Int" => Box::new(I32Property(property)),
-        "UInt" => Box::new(U32Property()),
-        "Long" => Box::new(I64Property()),
-        "ULong" => Box::new(U64Property()),
-        "Float" => Box::new(F32Property()),
-        "Double" => Box::new(F64Property()),
+        "UInt" => Box::new(U32Property(property)),
+        "Long" => Box::new(I64Property(property)),
+        "ULong" => Box::new(U64Property(property)),
+        "Float" => Box::new(F32Property(property)),
+        "Double" => Box::new(F64Property(property)),
         // "Double" => Box::new(DoubleProperty),
         // "String" => Box::new(StringProperty),
         // "Date" => Box::new(DateProperty),
@@ -54,63 +54,63 @@ impl PropertyInfo for I32Property<'_> {
 
 }
 
-struct U32Property();
+struct U32Property<'p>(&'p Property);
 
-impl PropertyInfo for U32Property {
-
-}
-
-struct I64Property();
-
-impl PropertyInfo for I64Property {
+impl PropertyInfo for U32Property<'_> {
 
 }
 
+struct I64Property<'p>(&'p Property);
 
-struct U64Property();
-
-impl PropertyInfo for U64Property {
-
-}
-
-struct F32Property();
-
-impl PropertyInfo for F32Property {
+impl PropertyInfo for I64Property<'_> {
 
 }
 
-struct F64Property();
 
-impl PropertyInfo for F64Property {
+struct U64Property<'p>(&'p Property);
 
-}
-
-struct DateProperty();
-
-impl PropertyInfo for DateProperty {
+impl PropertyInfo for U64Property<'_> {
 
 }
 
-struct StringProperty();
+struct F32Property<'p>(&'p Property);
 
-impl PropertyInfo for StringProperty {
-
-}
-
-struct StructProperty();
-
-impl PropertyInfo for StructProperty {
+impl PropertyInfo for F32Property<'_> {
 
 }
 
-struct EnumProperty();
+struct F64Property<'p>(&'p Property);
 
-impl PropertyInfo for EnumProperty {
+impl PropertyInfo for F64Property<'_> {
 
 }
 
-struct VecProperty();
+struct DateProperty<'p>(&'p Property);
 
-impl PropertyInfo for VecProperty {
+impl PropertyInfo for DateProperty<'_> {
+
+}
+
+struct StringProperty<'p>(&'p Property);
+
+impl PropertyInfo for StringProperty<'_> {
+
+}
+
+struct StructProperty<'p>(&'p Property);
+
+impl PropertyInfo for StructProperty<'_> {
+
+}
+
+struct EnumProperty<'p>(&'p Property);
+
+impl PropertyInfo for EnumProperty<'_> {
+
+}
+
+struct VecProperty<'p>(&'p Property);
+
+impl PropertyInfo for VecProperty<'_> {
 
 }

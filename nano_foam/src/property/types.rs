@@ -6,7 +6,7 @@ use quote::quote;
 use super::Property;
 
 pub(crate) trait PropertyInfo {
-    fn to_setter_token_stream(&self, property: &Property) -> Result<TokenStream, TokenStream> {
+    fn to_setter_token_stream(&self) -> Result<TokenStream, TokenStream> {
         Err(quote! {
             compile_error!("Do not support");
         })

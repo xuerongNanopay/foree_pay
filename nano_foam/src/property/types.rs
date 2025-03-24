@@ -13,9 +13,9 @@ pub(crate) trait PropertyInfo {
     }
 }
 
-pub(crate) fn new_property_info(property_type: &str) -> Result<Box<dyn PropertyInfo>, TokenStream> {
-    Ok(match property_type {
-        "Int" => Box::new(I32Property()),
+pub(crate) fn new_property_info(property: &Property) -> Result<Box<dyn PropertyInfo + '_>, TokenStream> {
+    Ok(match property.property_type().as_str() {
+        "Int" => Box::new(I32Property(property)),
         "UInt" => Box::new(U32Property()),
         "Long" => Box::new(I64Property()),
         "ULong" => Box::new(U64Property()),
@@ -28,7 +28,8 @@ pub(crate) fn new_property_info(property_type: &str) -> Result<Box<dyn PropertyI
         // "Enum" => Box::new(EnumProperty),
         // "Vec" => Box::new(VecProperty),
         _ => {
-            let txt = format!("unsupport property type `{}`", property_type);
+            let t = property.property_type();
+            let txt = format!("unsupport property type `{}`", t);
             return Err(quote! {
                 compile_error!(#txt);
             });
@@ -47,9 +48,9 @@ pub(crate) fn new_property_info(property_type: &str) -> Result<Box<dyn PropertyI
 // }
 
 
-struct I32Property();
+struct I32Property<'p>(&'p Property);
 
-impl PropertyInfo for I32Property {
+impl PropertyInfo for I32Property<'_> {
 
 }
 
